@@ -9,24 +9,28 @@ import java.util.Scanner;
 public abstract class FileLoader {
     public static ArrayList<App.File> loadFile(String directoryPath) {
         ArrayList<App.File> filesContentList = new ArrayList<App.File>();
-        File folder = new File(directoryPath);
-        for (File file : folder.listFiles()) {
-            if (getFileExtension(file).equals("txt") ||
-                getFileExtension(file).equals("csv") ||
-                getFileExtension(file).equals("xml") ||
-                getFileExtension(file).equals("json")) {
-                try {
-                    Scanner fileScanner = new Scanner(file);
-                    String fileContent = fileScanner.useDelimiter("\\A").next();
-                    filesContentList.add(new App.File(fileContent.split(" "), file.getName()));
-                    fileScanner.close();
-                } catch(FileNotFoundException fileUnavailable) {
-                    System.out.println("No ha sido posible encontrar el archivo");
+        try {
+            File folder = new File(directoryPath);
+            for (File file : folder.listFiles()) {
+                if (getFileExtension(file).equals("txt") ||
+                        getFileExtension(file).equals("csv") ||
+                        getFileExtension(file).equals("xml") ||
+                        getFileExtension(file).equals("json")) {
+                    try {
+                        Scanner fileScanner = new Scanner(file);
+                        String fileContent = fileScanner.useDelimiter("\\A").next();
+                        filesContentList.add(new App.File(fileContent.split(" "), file.getName()));
+                        fileScanner.close();
+                    } catch (FileNotFoundException fileUnavailable) {
+                        System.out.println("No ha sido posible encontrar el archivo");
+                    }
+                } else {
+                    System.out.printf("El archivo %s no tiene una extensión válida.\n", file.getName());
+                    System.exit(0);
                 }
-            } else {
-                System.out.printf("El archivo %s no tiene una extensión válida.\n", file.getName());
-                System.exit(0);
             }
+        } catch (NullPointerException folder) {
+            System.out.println("No se encontró la carpeta indicada");
         }
         return filesContentList;
     }
